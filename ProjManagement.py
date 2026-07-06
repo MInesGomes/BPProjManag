@@ -4,53 +4,48 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
+def initialize_session_state():
+    if 'engineers_list' not in st.session_state:
+        st.session_state.engineers_list = [f"Engineer {i}" for i in range(1, 16)]
+        st.session_state.departments_list = ["Backend", "Frontend", "DevOps", "QA", "Data Science"]
+        st.session_state.capacities = {f"Engineer {i}": (32 if i % 3 == 0 else 40) for i in range(1, 16)}
+        
+        st.session_state.eng_dept_map = {}
+        for i, eng in enumerate(st.session_state.engineers_list):
+            dept = st.session_state.departments_list[i % len(st.session_state.departments_list)]
+            st.session_state.eng_dept_map[eng] = dept
+
+    if 'projects_df' not in st.session_state:
+        base_date = datetime.today() - timedelta(days=datetime.today().weekday())
+        projects_data = []
+        project_names = ["Project Alpha", "Project Beta", "Project Gamma", "Project Delta", "Project Epsilon"]
+        for idx, p_name in enumerate(project_names):
+            start_dt = base_date + timedelta(days=idx*7)
+            end_dt = start_dt + timedelta(days=60)
+            projects_data.append({"Project": p_name, "Proj Start": start_dt.date(), "Proj End": end_dt.date()})
+        st.session_state.projects_df = pd.DataFrame(projects_data)
+
+    if 'requests' not in st.session_state:
+        base_date = datetime.today() - timedelta(days=datetime.today().weekday())
+        st.session_state.requests = pd.DataFrame([{
+            "Req ID": 1001,
+            "Project": "Project Alpha",
+            "Required Dept": "QA",
+            "Start Date": base_date.date(),
+            "End Date": (base_date + timedelta(days=14)).date(),
+            "Hours/Day": 4,
+            "Status": "Pending",
+            "Assigned Engineer": "None"
+        }])
+        st.session_state.next_req_id = 1002
+
+    if 'allocations' not in st.session_state:
+        st.session_state.allocations = pd.DataFrame(columns=[
+            "Engineer", "Department", "Project", "Start Date", "End Date", "Hours/Day", "Linked Req ID"
+        ])
+
 # --- Page Setup & Config ---
-st.set_page_config(page_title="Resources Sync - Resource Allocation", layout="wide")
 
-st.title("🗓️ Resources Sync: Resource Workflow Portal")
-st.markdown("A two-step workflow featuring **Smart Capacity Approvals**, **Availability Heatmaps**, and **Stacked Workload Analysis**.")
-
-# --- Session State Initialization ---
-if 'engineers_list' not in st.session_state:
-    st.session_state.engineers_list = [f"Engineer {i}" for i in range(1, 16)]
-    st.session_state.departments_list = ["Backend", "Frontend", "DevOps", "QA", "Data Science"]
-    st.session_state.capacities = {f"Engineer {i}": (32 if i % 3 == 0 else 40) for i in range(1, 16)}
-    
-    st.session_state.eng_dept_map = {}
-    for i, eng in enumerate(st.session_state.engineers_list):
-        dept = st.session_state.departments_list[i % len(st.session_state.departments_list)]
-        st.session_state.eng_dept_map[eng] = dept
-
-if 'projects_df' not in st.session_state:
-    base_date = datetime.today() - timedelta(days=datetime.today().weekday())
-    projects_data = []
-    project_names = ["Project Alpha", "Project Beta", "Project Gamma", "Project Delta", "Project Epsilon"]
-    for idx, p_name in enumerate(project_names):
-        start_dt = base_date + timedelta(days=idx*7)
-        end_dt = start_dt + timedelta(days=60)
-        projects_data.append({"Project": p_name, "Proj Start": start_dt.date(), "Proj End": end_dt.date()})
-    st.session_state.projects_df = pd.DataFrame(projects_data)
-
-if 'requests' not in st.session_state:
-    base_date = datetime.today() - timedelta(days=datetime.today().weekday())
-    st.session_state.requests = pd.DataFrame([{
-        "Req ID": 1001,
-        "Project": "Project Alpha",
-        "Required Dept": "QA",
-        "Start Date": base_date.date(),
-        "End Date": (base_date + timedelta(days=14)).date(),
-        "Hours/Day": 4,
-        "Status": "Pending",
-        "Assigned Engineer": "None"
-    }])
-    st.session_state.next_req_id = 1002
-
-if 'allocations' not in st.session_state:
-    st.session_state.allocations = pd.DataFrame(columns=[
-        "Engineer", "Department", "Project", "Start Date", "End Date", "Hours/Day", "Linked Req ID"
-    ])
-
-# --- Helper Functions ---
 def get_daily_load(target_eng, start_date, end_date):
     """Returns a dict of {date: total_hours} for an engineer in a given date range (Business days only)."""
     df = st.session_state.allocations
