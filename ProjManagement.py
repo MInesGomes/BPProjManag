@@ -4,6 +4,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
+# --- Page Setup & Config ---
+st.set_page_config(page_title="Resources Sync - Resource Allocation", layout="wide")
+
+st.title("🗓️ Resources Sync: Resource Workflow Portal")
+st.markdown("A two-step workflow featuring **Smart Capacity Approvals**, **Availability Heatmaps**, and **Stacked Workload Analysis**.")
+
+# --- Session State Initialization ---
 def initialize_session_state():
     if 'engineers_list' not in st.session_state:
         st.session_state.engineers_list = [f"Engineer {i}" for i in range(1, 16)]
@@ -45,7 +52,6 @@ def initialize_session_state():
         ])
 
 # --- Page Setup & Config ---
-
 def get_daily_load(target_eng, start_date, end_date):
     """Returns a dict of {date: total_hours} for an engineer in a given date range (Business days only)."""
     df = st.session_state.allocations
@@ -60,6 +66,12 @@ def get_daily_load(target_eng, start_date, end_date):
             if ed.date() in daily_hours:
                 daily_hours[ed.date()] += row["Hours/Day"]
     return daily_hours
+
+
+# ==========================================
+#         Session State Initialization
+# ==========================================
+initialize_session_state()
 
 # --- Sidebar: Role Switcher & System Reset ---
 st.sidebar.header("👤 User Role")
