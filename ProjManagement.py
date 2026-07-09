@@ -91,27 +91,33 @@ if user_role == "Project Manager":
     
     with col_req:
         st.subheader("📝 Request Project Resources")
-        with st.form("request_form", clear_on_submit=True):
+        
+        # 🟢 Removed st.form wrapper, using a simple container for style
+        with st.container(border=True):
             req_proj = st.selectbox("Select Project", st.session_state.projects_df["Project"])
             req_dept = st.selectbox("Required Role (Department)", st.session_state.departments_list)
             req_start = st.date_input("Need Start Date", datetime.today())
             req_end = st.date_input("Need End Date", datetime.today() + timedelta(days=14))
             req_hrs = st.slider("Hours per Day Required", min_value=1, max_value=8, value=4)
-            submitted = st.form_submit_button("Submit Request to Department Manager")
+            
+            # ⚡ LIVE CHECK: triggers when the user changes a date!
+            dates_are_invalid = req_start > req_end
+            if dates_are_invalid:
+                st.error("⚠️ Rule Violation: Start Date must be before or equal to End Date.")
+                
+            # Disable the submit button completely if dates are invalid
+            submitted = st.button("Submit Request to Department Manager", disabled=dates_are_invalid)
             
             if submitted:
-                if req_start > req_end:
-                    st.error("Error: Start Date must be before End Date.")
-                else:
-                    new_req = pd.DataFrame([{
-                        "Req ID": st.session_state.next_req_id, "Project": req_proj,
-                        "Required Dept": req_dept, "Start Date": req_start, "End Date": req_end,
-                        "Hours/Day": req_hrs, "Status": "Pending", "Assigned Engineer": "None"
-                    }])
-                    st.session_state.requests = pd.concat([st.session_state.requests, new_req], ignore_index=True)
-                    st.session_state.next_req_id += 1
-                    st.success("Request submitted successfully!")
-                    st.rerun()
+                new_req = pd.DataFrame([{
+                    "Req ID": st.session_state.next_req_id, "Project": req_proj,
+                    "Required Dept": req_dept, "Start Date": req_start, "End Date": req_end,
+                    "Hours/Day": req_hrs, "Status": "Pending", "Assigned Engineer": "None"
+                }])
+                st.session_state.requests = pd.concat([st.session_state.requests, new_req], ignore_index=True)
+                st.session_state.next_req_id += 1
+                st.success("Request submitted successfully!")
+                st.rerun()
 
     with col_proj:
         st.subheader("📁 Project Directory")
