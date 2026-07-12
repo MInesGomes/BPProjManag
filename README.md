@@ -1,12 +1,13 @@
-# 🚀 Resource Capacity Management System (RCMS)
 
-A Streamlit-based resource allocation and capacity planning application that helps organizations manage engineers across multiple projects while preventing resource overallocation.
+# 🚀 Resources Sync: Resource Workflow Portal (ResSync)
+
+ResSync is a Streamlit-based resource allocation and capacity planning platform designed to help organizations manage engineers across multiple projects while preventing resource overallocation and improving resource visibility.
 
 ---
 
 # 📖 Overview
 
-The Resource Capacity Management System (RCMS) was developed to address the challenges of managing shared engineering resources across multiple concurrent projects. The application enables Project Managers to submit resource requests and Department Managers to evaluate capacity, approve requests, and assign engineers using real-time workload analysis and visualization tools.
+The ResSync was developed to address the challenges of managing shared engineering resources across multiple concurrent projects. The application enables Project Managers to submit resource requests and Department Managers to evaluate capacity, approve requests, and assign engineers using real-time workload analysis and visualization tools.
 
 ---
 
@@ -27,7 +28,7 @@ As project complexity increases, manual resource planning becomes difficult to m
 
 # 💡 Proposed Solution
 
-RCMS provides a centralized platform for resource planning, allocation, and workload analysis.
+ResSync provides a centralized platform for resource planning, allocation, and workload analysis.
 
 The system allows:
 
@@ -226,7 +227,27 @@ The project contains:
 
 # ⚙️ Installation
 
-Clone the repository:
+## 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/RCMS.git
+git clone https://github.com/MInesGomes/BPProjManag.git
+cd BPProjManag
+```
+
+## 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+## 3. Run Application
+
+```bash
+streamlit run app.py
+```
+
+## 4. Execute Unit Tests
+
+```bash
+python -m unittest
+```
