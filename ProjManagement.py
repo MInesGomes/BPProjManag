@@ -289,7 +289,14 @@ elif user_role == "Department Manager":
                     bar_df, x="Date", y="Hours", color="Project", facet_row="Engineer",
                     title="Stacked Daily Hours", category_orders={"Engineer": target_engineers}
                 )
-                
+                 # Force y-axis tick spacing to every 4 hours instead of default 5, on all facet rows
+                fig_bar.update_yaxes(
+                tickmode="linear",
+                dtick=4,
+                matches=None  # allow each facet row to keep its own scale if needed
+                )
+
+                st.plotly_chart(fig_bar, use_container_width=True)
                 # Add a red threshold line at 12 hours for all subplots
                 fig_bar.add_hline(y=12, line_dash="dash", line_color="red", annotation_text="Max 12h")
                 
@@ -309,7 +316,7 @@ elif user_role == "Department Manager":
             viz_allocs_gantt = viz_allocs.copy()
             
             # 2. Create a unique Y-axis label
-            viz_allocs_gantt["Timeline_Y"] = viz_allocs_gantt["Engineer"] + " ➔ " + viz_allocs_gantt["Project"]
+            viz_allocs_gantt["Timeline"] = viz_allocs_gantt["Engineer"] + " ➔ " + viz_allocs_gantt["Project"]
             
             # 3. Sort the dataframe explicitly by Engineer, then by Start Date
             viz_allocs_gantt = viz_allocs_gantt.sort_values(by=["Engineer", "Start Date"])
