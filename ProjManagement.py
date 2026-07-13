@@ -293,7 +293,6 @@ elif user_role == "Department Manager":
                 fig_bar.update_yaxes(
                 tickmode="linear",
                 dtick=4,
-                matches=None  # allow each facet row to keep its own scale if needed
                 )
 
                 st.plotly_chart(fig_bar, use_container_width=True)
