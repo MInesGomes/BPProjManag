@@ -268,46 +268,46 @@ elif user_role == "Department Manager":
             fig_heat.update_layout(height=400)
             st.plotly_chart(fig_heat, width='stretch')
 
-   with tab2:
-    st.markdown("**Daily Project Load per Engineer** (Visualizing specific project stack)")
-    if not viz_allocs.empty:
-        bar_data = []
-        for _, row in viz_allocs.iterrows():
-            overlap_dates = pd.date_range(start=max(today_date, row["Start Date"]), 
-                                          end=min(future_date, row["End Date"]), freq='B')
-            for d in overlap_dates:
-                bar_data.append({
-                    "Engineer": row["Engineer"], "Date": d.date(), 
-                    "Project": row["Project"], "Hours": row["Hours/Day"]
-                })
-        bar_df = pd.DataFrame(bar_data)
+    with tab2:
+     st.markdown("**Daily Project Load per Engineer** (Visualizing specific project stack)")
+     if not viz_allocs.empty:
+         bar_data = []
+         for _, row in viz_allocs.iterrows():
+             overlap_dates = pd.date_range(start=max(today_date, row["Start Date"]), 
+                                           end=min(future_date, row["End Date"]), freq='B')
+             for d in overlap_dates:
+                 bar_data.append({
+                     "Engineer": row["Engineer"], "Date": d.date(), 
+                     "Project": row["Project"], "Hours": row["Hours/Day"]
+                 })
+         bar_df = pd.DataFrame(bar_data)
         
-        if not bar_df.empty:
-            fig_bar = px.bar(
-                bar_df, x="Date", y="Hours", color="Project", facet_row="Engineer",
-                title="Stacked Daily Hours", category_orders={"Engineer": target_engineers}
-            )
+         if not bar_df.empty:
+             fig_bar = px.bar(
+                 bar_df, x="Date", y="Hours", color="Project", facet_row="Engineer",
+                 title="Stacked Daily Hours", category_orders={"Engineer": target_engineers}
+             )
 
-            # Force y-axis tick spacing to every 4 hours, and unlink facet rows
-            fig_bar.update_yaxes(
-                tickmode="linear",
-                dtick=4,
-                matches=None,
-                title="Hours"
-            )
+             # Force y-axis tick spacing to every 4 hours, and unlink facet rows
+             fig_bar.update_yaxes(
+                 tickmode="linear",
+                 dtick=4,
+                 matches=None,
+                 title="Hours"
+             )
 
-            # Add a red threshold line at 12 hours for all subplots
-            fig_bar.add_hline(y=12, line_dash="dash", line_color="red", annotation_text="Max 12h")
+             # Add a red threshold line at 12 hours for all subplots
+             fig_bar.add_hline(y=12, line_dash="dash", line_color="red", annotation_text="Max 12h")
 
-            # Clean up facet layout
-            fig_bar.update_layout(height=150 * len(target_engineers), showlegend=True)
+             # Clean up facet layout
+             fig_bar.update_layout(height=150 * len(target_engineers), showlegend=True)
 
-            # Render ONCE, after all updates are applied
-            st.plotly_chart(fig_bar, width='stretch')
-        else:
-            st.info("No projects scheduled in the next 14 days.")
-    else:
-        st.info("No allocations exist for the selected filter.")
+             # Render ONCE, after all updates are applied
+             st.plotly_chart(fig_bar, width='stretch')
+         else:
+             st.info("No projects scheduled in the next 14 days.")
+     else:
+         st.info("No allocations exist for the selected filter.")
         
 
     with tab3:
