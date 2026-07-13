@@ -332,7 +332,7 @@ elif user_role == "Department Manager":
             fig_gantt.update_yaxes(
                 autorange="reversed",
                 categoryorder="array",
-                categoryarray=ordered_y_axis
+                categoryarray=ordered_y_axis,
                 tickmode="linear",
                 dtick=4
             )
