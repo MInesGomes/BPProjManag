@@ -316,13 +316,13 @@ elif user_role == "Department Manager":
             
             # 4. Extract the exact ordered list of Y-axis labels
             # Because the dataframe is sorted by Engineer, unique() will keep all of one engineer's rows together
-            ordered_y_axis = viz_allocs_gantt["Timeline_Y"].unique().tolist()
+            ordered_y_axis = viz_allocs_gantt["Timeline"].unique().tolist()
 
             fig_gantt = px.timeline(
                 viz_allocs_gantt, 
                 x_start="Start Date", 
                 x_end="End Date",
-                y="Timeline_Y", 
+                y="Timeline", 
                 color="Project", 
                 hover_data=["Hours/Day", "Engineer"],
                 color_discrete_sequence=px.colors.qualitative.Safe
@@ -333,7 +333,10 @@ elif user_role == "Department Manager":
                 autorange="reversed",
                 categoryorder="array",
                 categoryarray=ordered_y_axis
+                tickmode="linear",
+                dtick=4
             )
+            st.plotly_chart(fig_gantt, use_container_width=True)
             
             # Dynamic height based on the number of unique rows, not total dataframe length
             dynamic_height = max(400, len(ordered_y_axis) * 40)
